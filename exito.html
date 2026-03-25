@@ -1,10 +1,109 @@
-<h2>✅ Pago registrado correctamente</h2>
-<img src="images/ok.jpg" width="200">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pago Registrado - Educobros</title>
 
-<button onclick="volver()">Volver</button>
+<style>
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family:'Segoe UI', sans-serif;
+    background:#f0f4f8;
+    color:#1e293b;
+}
+
+/* HEADER (igual que index) */
+header {
+    background:linear-gradient(135deg, #1e3a5f, #2563eb);
+    color:white;
+    padding:2rem;
+    text-align:center;
+}
+
+header h1 {
+    font-size:2.2rem;
+}
+
+/* CONTENIDO CENTRADO */
+main {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:70vh;
+    padding:1rem;
+}
+
+/* TARJETA */
+.success-card {
+    background:white;
+    padding:2.5rem;
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 4px 20px rgba(0,0,0,.1);
+    max-width:400px;
+    width:100%;
+}
+
+/* TEXTO */
+.success-card h2 {
+    margin-bottom:1.5rem;
+    color:#1e3a5f;
+}
+
+/* IMAGEN */
+.success-card img {
+    width:180px;
+    margin-bottom:1.5rem;
+}
+
+/* TEXTO REDIRECCIÓN */
+.redirect-text {
+    margin-top:1rem;
+    color:#64748b;
+    font-size:.95rem;
+}
+
+/* FOOTER */
+footer {
+    background:#1e293b;
+    color:#94a3b8;
+    text-align:center;
+    padding:1.2rem;
+    font-size:.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Educobros</h1>
+</header>
+
+<main>
+    <div class="success-card">
+        <h2>✅ Pago registrado correctamente</h2>
+        <img src="images/ok.jpg" alt="Éxito">
+
+        <p class="redirect-text">
+            Serás redirigido automáticamente en unos segundos...
+        </p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Educobros</p>
+</footer>
 
 <script>
-function volver(){
+// Redirección automática después de 3 segundos
+setTimeout(() => {
     window.location.href = "index.html";
-}
+}, 3000);
 </script>
+
+</body>
+</html>
