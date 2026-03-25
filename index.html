@@ -526,7 +526,13 @@ formulario.addEventListener('submit', function(evento){
 
 
         mostrarMensaje(`✅ Pago de ${formatRD(monto)} registrado exitosamente`);
+        setTimeout(() => {
+        window.location.href = "success.html";
+        }, 1000);
     }
+
+    
+    
 
 );
 
