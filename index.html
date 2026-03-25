@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educobros - Sistemas De Cobros Escolares </title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
 
     <style>
 /* RESET */
@@ -184,13 +185,31 @@ footer a { color:#60a5fa; text-decoration:none; }
   table { font-size:.85rem; }
 }
 
+.logo-container {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:1rem;
+}
+
+.logo {
+    width:50px;
+    height:50px;
+    object-fit:contain;
+}
+
 </style>
 
 </head>
 <body>
 <header>
-    <h1>Educobros</h1>
-    <p>Sistemas De Gestion De Cobros Escolares</p>
+    <div class="logo-container">
+        <img src="images/favicon.png" alt="Logo" class="logo">
+        <div>
+            <h1>Educobros</h1>
+            <p>Sistemas De Gestion De Cobros Escolares</p>
+        </div>
+    </div>
     <nav>   
         <a href="#Inicio">Inicio</a>
         <a href="#Estudiantes">Estudiantes</a>
