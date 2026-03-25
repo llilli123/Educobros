@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educobros - Sistemas De Cobros Escolares </title>
     <link rel="icon" type="image/png" href="images/favicon.png">
+    <p id="fechaActual" class="subinfo"></p>
 
     <style>
 /* RESET */
 * { margin:0; padding:0; box-sizing:border-box; }
+
+#fechaActual {
+    text-align:center;
+    padding:1rem;
+    background:linear-gradient(135deg, #1e3a5f, #2563eb);
+    color: white;
+    font-weight:600;
+    font-size:.9rem;
+}
 
 body {
     font-family:'Segoe UI', sans-serif;
@@ -555,9 +565,20 @@ formulario.addEventListener('submit', function(evento){
 
 );
 
+function mostrarFechaActual() {
+    const hoy = new Date();
+    const fecha = hoy.toLocaleDateString("es-DO", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+    document.getElementById("fechaActual").textContent = "Fecha actual: " + fecha;
+}
+
 console.log("EduCobros JS Cargados",estudiantes);
 
-
+mostrarFechaActual()
 cargarDatos();
 llenarSelectEstudiante();
 renderTabla(estudiantes);
