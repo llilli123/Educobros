@@ -204,33 +204,33 @@ footer a { color:#60a5fa; text-decoration:none; }
   <div class="tarjetas-resumen">
     <div class="tarjeta">
       <h3>Estudiantes</h3>
-      <p class="numero">347</p>
+      <p class="numero" id="totalEstudiantes">0</p>
       <p>Matriculados activos</p>
     </div>
     <div class="tarjeta">
       <h3>Pagos del Mes</h3>
-      <p class="numero">RD$ 1,245,000</p>
+      <p class="numero" id="totalRecaudado">RD$0</p>
       <p>Recaudado en febrero</p>
     </div>
     <div class="tarjeta">
       <h3>Pendientes</h3>
-      <p class="numero">52</p>
+      <p class="numero" id="totalPendientes">0</p>
       <p>Con balance</p>
     </div>
     <div class="tarjeta">
       <h3>Mora</h3>
-      <p class="numero">RD$ 312,500</p>
+      <p class="numero" id="totalMora">RD$0</p>
       <p>Total en mora</p>
     </div>
   </div>
-</section id="Estudiantes">
-<section>
+</section>
+<section id="Estudiantes">
 <h2> Estudiantes Y Balances</h2>
 <table>
     <thead>
         <tr><th>ID</th><th>Nombre</th><th>Grado</th><th>Mensualidad</th><th>Estado</th></tr>
     </thead>
-    <tbody>
+    <tbody id="tablebody">
         <tr><td>001</td><td>Maria Garcia Perez</td><td>4to Primaria</td><td>RD$ 4,500</td><td>Al Dia</td></tr>
         <tr><td>002</td><td>Carlos Rodriguez</td><td>6to Primaria</td><td>RD$ 4,500</td><td>Debe 2 Meses</td></tr>
         <tr><td>003</td><td>Ana Martinez Diaz</td><td>2do Sec.</td><td>RD$ 5,200</td><td>Al Dia</td></tr>
@@ -241,15 +241,11 @@ footer a { color:#60a5fa; text-decoration:none; }
 </section>
 <section id="Pagos">
     <h2> Registrar Nuevo Pago</h2>
-    <form action="#" method="POST">
+    <form method="POST">
         <label for="estudiante">Estudiantes:</label>
         <select id="estudiante" name="estudiante" required>
             <option value="">-- Seleccionar --</option>
-            <option>001 - Maria Garcia</option>
-            <option>002 - Carlos Rodriguez</option>
-            <option>003 - Ana Martinez</option>
-            <option>004 - Luis Hernandes</option>
-            <option>005 - Sofia Reyes</option>
+            
         </select>
 
         <label for="concepto">Concepto:</label>
@@ -281,6 +277,25 @@ footer a { color:#60a5fa; text-decoration:none; }
     </form>
 </section>
 
+<section id="Reportes">
+    <h2> Historial De Pagos</h2>
+    <div id="mensajeExito" style="display:none; background:#f0f4f8; color:#1e293b; padding:1rem; border: radius 10px; font: weight 600px;"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Estudiante</th>
+                <th>Concepto</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Método</th>
+                <th>Accion</th>
+            </tr>
+        </thead>
+        <tbody id="tablaPagos"></tbody>
+    </table>
+    <p id="sinPagos" style="text-align:center; color:#2563eb; padding:2rem;">No hay pagos registrados.</p>
+    </section>
+
 </main>
 
 <footer>
@@ -288,5 +303,197 @@ footer a { color:#60a5fa; text-decoration:none; }
 <p> ISW-311 | Tecnologia de Internet I | UCE</p>
 </footer>
 
+<script>
+    // Renderiza la tabla de pagos
+function renderPagos() {
+  const tbody = document.getElementById('tablaPagos');
+  const sinPagos = document.getElementById('sinPagos');
+  tbody.innerHTML = '';
+
+  if (pagos.length === 0) {
+    sinPagos.style.display = 'block';
+    return;
+  }
+  sinPagos.style.display = 'none';
+
+  pagos.forEach((pago, index) => {
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${pago.estudiante}</td>
+      <td>${pago.concepto}</td>
+      <td>${formatRD(pago.monto)}</td>
+      <td>${pago.fecha}</td>
+      <td>${pago.metodo}</td>
+      <td><button onclick="eliminarPago(${index})" style="background:#fee2e2;color:#dc2626;border:none;padding:.3rem .8rem;border-radius:6px;cursor:pointer;font-weight:600;">🗑️ Eliminar</button></td>
+    `;
+    tbody.appendChild(fila);
+  });
+}
+
+// Eliminar un pago (con confirmación)
+function eliminarPago(index) {
+  if (confirm('¿Estás seguro de eliminar este pago?')) {
+    pagos.splice(index, 1);
+    renderPagos();
+    actualizarDashboard();
+    guardarDatos(); // Lo crearemos en el Paso 9
+  }
+}
+
+// Mensaje de éxito temporal
+function mostrarMensaje(texto) {
+  const msg = document.getElementById('mensajeExito');
+  msg.textContent = texto;
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 3000);
+}
+
+    function actualizarDashboard() {
+  const total = estudiantes.length;
+  const pendientes = estudiantes.filter(e => e.mesesDebidos > 0).length;
+  const mora = estudiantes
+    .filter(e => e.mesesDebidos > 0)
+    .reduce((sum, e) => sum + (e.mensualidad * e.mesesDebidos), 0);
+  const recaudado = pagos.reduce((sum, p) => sum + p.monto, 0);
+
+  document.getElementById('totalEstudiantes').textContent = total;
+  document.getElementById('totalRecaudado').textContent = formatRD(recaudado);
+  document.getElementById('totalPendientes').textContent = pendientes;
+  document.getElementById('totalMora').textContent = formatRD(mora);
+}
+
+
+    function llenarSelectEstudiante(){
+        const select = document.getElementById('estudiante');
+        estudiantes.forEach(est => {
+            const option = document.createElement('option');
+            option.value = est.id;
+            option.textContent = `${est.id} - ${est.nombre}`;
+            select.appendChild(option);
+        
+    }); }
+    
+    // Vamos a hacer una funcion para poner un emoji segun su 
+    function getEstado(meses){
+
+        if (meses === 0)
+        return "Al Dia 😂";
+        if (meses <= 2)
+        return `😒 Debes ${meses} meses`;
+        return `🤮 Debes ${meses} meses`;
+
+
+    }
+
+    function formatRD(n){
+
+        return "RD$" + n.toLocaleString("es-DO");
+    }
+
+    
+
+
+    function renderTabla(datos){
+        const tbody = document.getElementById('tablebody');
+        tbody.innerHTML = '';
+
+        datos.forEach(est => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+            <td>${est.id}</td>
+            <td>${est.nombre}</td>
+            <td>${est.grado}</td>
+            <td>${formatRD(est.mensualidad)}</td>
+            <td>${getEstado(est.mesesDebidos)}</td>
+            `;
+            tbody.appendChild(fila);
+
+        })
+    }
+
+    // Array
+
+    let pagos = [];
+
+    //Mandamos los datos de ejemplo
+    const estudiantes = [
+    {id:"001", nombre:"Maria Mota", grado:"4to Primaria", mensualidad: 4500, mesesDebidos: 0},
+    {id:"002", nombre:"Pedro Doñe", grado:"6to Primaria", mensualidad: 4500, mesesDebidos: 0},
+    {id:"003", nombre:"Monica Galindo", grado:"1ro Primaria", mensualidad: 144500, mesesDebidos: 24},
+    {id:"004", nombre:"Aquiles Esquiver Madrazo", grado:"3ro Secundaria", mensualidad: 14500, mesesDebidos: 7},
+    {id:"005", nombre:"Aquiles Esquiver Madrazoso", grado:"5to Secundaria", mensualidad: 3500, mesesDebidos: 5}
+];
+
+const formulario = document.querySelector('form');
+
+formulario.addEventListener('submit', function(evento){
+    evento.preventDefault();
+
+    
+        const estudianteSelect = document.getElementById('estudiante');
+        const concepto = document.getElementById('concepto').value;
+        const monto = parseFloat(document.getElementById('monto').value);
+        const fecha = document.getElementById('fecha').value;
+        const metodo = document.querySelector('input[name="metodo"]:checked').value;
+        const notas = document.getElementById('notas').value;
+
+
+        if (!estudianteSelect.value) {
+            alert("Seleccione un estudiante.");
+            return;
+        }
+        if (!concepto) {
+            alert("Seleccione un concepto.");
+            return;
+        }
+        if (!monto || monto <= 0) {
+            alert("Ingrese un monto válido.");
+            return;
+        }
+        if (!fecha) {
+            alert("Ingrese una fecha de pago.");
+            return;
+        }
+        if (!metodo) {
+            alert("Seleccione un método de pago.");
+            return;
+        }
+
+        const nuevoPago = {
+            id: Date.now(),
+            estudiante: estudianteSelect.options[estudianteSelect.selectedIndex].text,
+            concepto: concepto,
+            monto: monto,
+            fecha: fecha,
+            metodo: metodo.value,
+            notas: notas    
+
+        };
+
+    pagos.push(nuevoPago);
+    console.log("Nuevo Pago Registrado:", nuevoPago);
+
+    renderPagos();
+    
+    
+    actualizarDashboard();
+
+
+    formulario.reset();
+
+
+        mostrarMensaje("Pago registrado exitosamente", "success");
+    }
+
+);
+
+console.log("EduCobros JS Cargados",estudiantes);
+
+
+llenarSelectEstudiante();
+renderTabla(estudiantes);
+
+
+</script>
 </body>
 </html>
